@@ -1,0 +1,557 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #EDF0EC;
+    --card: #FFFFFF;
+    --ink: #17282A;
+    --muted: #6E807D;
+    --rule: #D6DED9;
+    --accent: #0E6A52;
+    --accent-soft: #E3EFE9;
+    --alert: #8C4327;
+    --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 28px 18px 56px;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sheet {
+    max-width: 620px;
+    margin: 0 auto;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 30px 30px 26px;
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+  }
+
+  .lede {
+    margin: 0 0 26px;
+    color: var(--muted);
+    max-width: 48ch;
+  }
+
+  /* ---- ledger ---- */
+
+  .ledger { border-top: 1px solid var(--rule); }
+
+  .row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 11px 0 11px 12px;
+    border-left: 3px solid transparent;
+  }
+
+  .row.is-source {
+    border-left-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .label {
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .row.total .label { color: var(--ink); font-weight: 500; }
+
+  .amount {
+    font-family: var(--serif);
+    font-variant-numeric: tabular-nums lining-nums;
+    font-size: 21px;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    flex: 0 0 auto;
+  }
+
+  .row.total .amount { font-size: 27px; font-weight: 600; }
+
+  .cur { color: var(--muted); font-size: 0.75em; }
+
+  .amount input {
+    font: inherit;
+    font-variant-numeric: inherit;
+    color: inherit;
+    text-align: right;
+    width: 7.4em;
+    padding: 2px 6px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--rule);
+    border-radius: 2px;
+  }
+
+  .amount input:hover { border-bottom-color: var(--muted); }
+
+  .amount input:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-bottom-color: transparent;
+  }
+
+  .amount .val {
+    width: 7.4em;
+    text-align: right;
+    padding: 2px 6px;
+    display: inline-block;
+    color: var(--muted);
+  }
+
+  .divider { height: 1px; background: var(--rule); margin-left: 12px; }
+  .divider.strong { height: 3px; background: none; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+
+  /* ---- actions ---- */
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin: 22px 0 0 12px;
+    flex-wrap: wrap;
+  }
+
+  button {
+    font: inherit;
+    font-size: 14px;
+    padding: 7px 14px;
+    border-radius: 2px;
+    border: 1px solid var(--rule);
+    background: var(--card);
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  button:hover { border-color: var(--muted); }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.primary:hover { background: #0B5642; }
+
+  /* ---- settings ---- */
+
+  .settings {
+    margin-top: 30px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 26px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .pct {
+    display: inline-flex;
+    align-items: baseline;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 5px 9px;
+    background: var(--card);
+  }
+
+  .pct:focus-within { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+
+  .pct input {
+    font-family: var(--serif);
+    font-variant-numeric: tabular-nums;
+    font-size: 17px;
+    width: 3.6em;
+    border: none;
+    background: transparent;
+    color: inherit;
+    text-align: right;
+    padding: 0;
+  }
+
+  .pct input:focus { outline: none; }
+  .pct span { color: var(--muted); margin-left: 3px; }
+
+  .span2 { grid-column: 1 / -1; }
+
+  .explain {
+    margin: 8px 0 0;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+
+  .note {
+    margin: 26px 0 0;
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 58ch;
+  }
+
+  .alert {
+    margin: 16px 0 0 12px;
+    padding: 9px 12px;
+    font-size: 13.5px;
+    color: var(--alert);
+    border-left: 3px solid var(--alert);
+    background: #FBF1EC;
+  }
+
+  .fallback {
+    margin: 16px 0 0 12px;
+  }
+
+  .fallback p {
+    margin: 0 0 7px;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+
+  .fallback textarea {
+    width: 100%;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink);
+    padding: 10px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: var(--paper);
+    resize: vertical;
+  }
+
+  .fallback textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  [hidden] { display: none !important; }
+
+  @media (max-width: 560px) {
+    body { padding: 16px 12px 40px; }
+    .sheet { padding: 22px 18px; }
+    h1 { font-size: 24px; }
+    .amount { font-size: 19px; }
+    .row.total .amount { font-size: 23px; }
+    .amount input, .amount .val { width: 6.2em; }
+    .settings { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    button, .amount input { transition: background-color .12s, border-color .12s; }
+  }
+</style>
+
+<main class="sheet">
+  <h1>Quotation calculator</h1>
+  <p class="lede">Type into whichever line you already know. The other lines fill themselves in.</p>
+
+  <div class="ledger">
+    <div class="row" id="row-net">
+      <span class="label"><label for="in-net">Our quote</label></span>
+      <span class="amount"><span class="cur">€</span><input id="in-net" type="text" inputmode="decimal" autocomplete="off" data-key="net" placeholder="0.00"></span>
+    </div>
+
+    <div class="row">
+      <span class="label">University overhead <span id="lbl-ov"></span></span>
+      <span class="amount"><span class="cur">€</span><span class="val" id="out-ov">—</span></span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row" id="row-sub">
+      <span class="label"><label for="in-sub">Subtotal before tax</label></span>
+      <span class="amount"><span class="cur">€</span><input id="in-sub" type="text" inputmode="decimal" autocomplete="off" data-key="sub" placeholder="0.00"></span>
+    </div>
+
+    <div class="row">
+      <span class="label">Sales tax <span id="lbl-vat"></span></span>
+      <span class="amount"><span class="cur">€</span><span class="val" id="out-vat">—</span></span>
+    </div>
+
+    <div class="divider strong"></div>
+
+    <div class="row total" id="row-gross">
+      <span class="label"><label for="in-gross">Client pays</label></span>
+      <span class="amount"><span class="cur">€</span><input id="in-gross" type="text" inputmode="decimal" autocomplete="off" data-key="gross" placeholder="0.00"></span>
+    </div>
+  </div>
+
+  <p class="alert" id="alert" hidden></p>
+
+  <div class="actions">
+    <button class="primary" id="btn-copy">Copy breakdown</button>
+    <button id="btn-clear">Clear</button>
+  </div>
+
+  <div class="fallback" id="manual" hidden>
+    <p>The browser blocked the clipboard here. Select this text and copy it.</p>
+    <textarea id="manual-text" readonly rows="5" spellcheck="false"></textarea>
+  </div>
+
+  <div class="settings">
+    <div class="field">
+      <label for="in-rate">Overhead rate</label>
+      <span class="pct"><input id="in-rate" type="text" inputmode="decimal" autocomplete="off" value="20"><span>%</span></span>
+    </div>
+
+    <div class="field">
+      <label for="in-vat">Sales tax rate</label>
+      <span class="pct"><input id="in-vat" type="text" inputmode="decimal" autocomplete="off" value="21"><span>%</span></span>
+    </div>
+
+    <p class="explain span2" id="explain"></p>
+  </div>
+
+  <p class="note">Amounts are rounded to the cent for display, and each column is adjusted so it adds up exactly. Your rates and overhead setting are remembered for next time.</p>
+</main>
+
+<script>
+(function () {
+  var STORE_KEY = 'quotation-calc:settings';
+
+  var state = {
+    source: 'net',
+    value: 100,
+    rate: 0.20,
+    vat: 0.21
+  };
+
+  var els = {
+    net: document.getElementById('in-net'),
+    sub: document.getElementById('in-sub'),
+    gross: document.getElementById('in-gross'),
+    ov: document.getElementById('out-ov'),
+    vat: document.getElementById('out-vat'),
+    rowNet: document.getElementById('row-net'),
+    rowSub: document.getElementById('row-sub'),
+    rowGross: document.getElementById('row-gross'),
+    rate: document.getElementById('in-rate'),
+    vatRate: document.getElementById('in-vat'),
+    explain: document.getElementById('explain'),
+    lblOv: document.getElementById('lbl-ov'),
+    lblVat: document.getElementById('lbl-vat'),
+    alert: document.getElementById('alert'),
+    copy: document.getElementById('btn-copy'),
+    manual: document.getElementById('manual'),
+    manualText: document.getElementById('manual-text'),
+    clear: document.getElementById('btn-clear')
+  };
+
+  var locale = (navigator.languages && navigator.languages[0]) || navigator.language || 'en-GB';
+  var money = new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  function parseNum(raw) {
+    if (raw == null) return null;
+    var s = String(raw).replace(/[\s\u00A0€]/g, '');
+    if (!s) return null;
+    var c = s.lastIndexOf(','), d = s.lastIndexOf('.');
+    if (c > -1 && d > -1) {
+      s = c > d ? s.replace(/\./g, '').replace(',', '.') : s.replace(/,/g, '');
+    } else if (c > -1) {
+      var parts = s.split(',');
+      s = (parts.length === 2 && parts[1].length !== 3) ? s.replace(',', '.') : s.replace(/,/g, '');
+    }
+    var n = parseFloat(s);
+    return isFinite(n) ? n : null;
+  }
+
+  function parsePct(raw) {
+    var n = parseNum(raw);
+    if (n === null || n < 0) return null;
+    return n / 100;
+  }
+
+  function round2(n) { return Math.round((n + Number.EPSILON) * 100) / 100; }
+
+  function compute() {
+    if (state.value === null) return null;
+    if (state.rate >= 1) return null;
+
+    // The overhead is always a share of the subtotal: overhead = rate x subtotal,
+    // our share = (1 - rate) x subtotal. So everything resolves through the subtotal.
+    var sub;
+    if (state.source === 'net') {
+      sub = state.value / (1 - state.rate);
+    } else if (state.source === 'sub') {
+      sub = state.value;
+    } else {
+      sub = state.value / (1 + state.vat);
+    }
+
+    var net = sub * (1 - state.rate);
+    var gross = sub * (1 + state.vat);
+
+    // Round the anchors, then derive the additions so every column adds up exactly.
+    var netR = round2(net), subR = round2(sub), grossR = round2(gross);
+    return { net: netR, ov: round2(subR - netR), sub: subR, vat: round2(grossR - subR), gross: grossR };
+  }
+
+  function render() {
+    var pct = function (r) { return +(r * 100).toFixed(4); };
+    els.lblOv.textContent = '(' + pct(state.rate) + '% of subtotal)';
+    els.lblVat.textContent = '(' + pct(state.vat) + '% of subtotal)';
+    els.explain.textContent = 'The university takes ' + pct(state.rate) + '% of the subtotal, leaving you '
+      + +(100 - pct(state.rate)).toFixed(4) + '%. Tax is then charged on the full subtotal.';
+
+    els.rowNet.classList.toggle('is-source', state.source === 'net');
+    els.rowSub.classList.toggle('is-source', state.source === 'sub');
+    els.rowGross.classList.toggle('is-source', state.source === 'gross');
+
+    var r = compute();
+
+    if (!r) {
+      els.alert.hidden = state.rate < 1;
+      if (state.rate >= 1) els.alert.textContent = 'An overhead of 100% or more would leave nothing for your share. Lower the rate.';
+      ['net', 'sub', 'gross'].forEach(function (k) {
+        if (document.activeElement !== els[k]) els[k].value = '';
+      });
+      els.ov.textContent = '—';
+      els.vat.textContent = '—';
+      return;
+    }
+
+    els.alert.hidden = true;
+    ['net', 'sub', 'gross'].forEach(function (k) {
+      if (document.activeElement !== els[k]) els[k].value = money.format(r[k]);
+    });
+    els.ov.textContent = money.format(r.ov);
+    els.vat.textContent = money.format(r.vat);
+  }
+
+  function save() {
+    try {
+      window.storage.set(STORE_KEY, JSON.stringify({ rate: state.rate, vat: state.vat }), false);
+    } catch (e) { /* settings just won't persist */ }
+  }
+
+  ['net', 'sub', 'gross'].forEach(function (key) {
+    els[key].addEventListener('input', function () {
+      state.source = key;
+      state.value = parseNum(this.value);
+      render();
+    });
+    els[key].addEventListener('focus', function () { this.select(); });
+    els[key].addEventListener('blur', render);
+  });
+
+  els.rate.addEventListener('input', function () {
+    var p = parsePct(this.value);
+    if (p !== null) { state.rate = p; save(); render(); }
+  });
+
+  els.vatRate.addEventListener('input', function () {
+    var p = parsePct(this.value);
+    if (p !== null) { state.vat = p; save(); render(); }
+  });
+
+  els.clear.addEventListener('click', function () {
+    state.value = null;
+    state.source = 'net';
+    els.manual.hidden = true;
+    render();
+    els.net.focus();
+  });
+
+  els.copy.addEventListener('click', function () {
+    var r = compute();
+    if (!r) return;
+    var pad = function (label, amount) {
+      var a = money.format(amount);
+      var gap = Math.max(2, 30 - label.length - a.length);
+      return label + new Array(gap + 1).join(' ') + a;
+    };
+    var text = [
+      pad('Our quote', r.net),
+      pad('University overhead ' + (+(state.rate * 100).toFixed(4)) + '%', r.ov),
+      pad('Subtotal before tax', r.sub),
+      pad('Sales tax ' + (+(state.vat * 100).toFixed(4)) + '%', r.vat),
+      pad('Total', r.gross)
+    ].join('\n');
+
+    var done = function () {
+      els.manual.hidden = true;
+      els.copy.textContent = 'Copied';
+      setTimeout(function () { els.copy.textContent = 'Copy breakdown'; }, 1600);
+    };
+
+    // Last resort: put the text on screen so it can be selected by hand.
+    var manual = function () {
+      els.manualText.value = text;
+      els.manual.hidden = false;
+      els.manualText.focus();
+      els.manualText.select();
+      els.copy.textContent = 'Copy breakdown';
+    };
+
+    // Older path, still the one that works inside sandboxed frames.
+    var legacy = function () {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;padding:0;border:none;opacity:0;';
+      document.body.appendChild(ta);
+      var ok = false;
+      try {
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length);
+        ok = document.execCommand('copy');
+      } catch (e) {
+        ok = false;
+      }
+      document.body.removeChild(ta);
+      return ok;
+    };
+
+    var fallback = function () {
+      if (!legacy()) manual(); else done();
+    };
+
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(fallback);
+      } else {
+        fallback();
+      }
+    } catch (e) {
+      fallback();
+    }
+  });
+
+  (function init() {
+    var go = function () {
+      els.rate.value = +(state.rate * 100).toFixed(4);
+      els.vatRate.value = +(state.vat * 100).toFixed(4);
+      render();
+    };
+    try {
+      window.storage.get(STORE_KEY, false).then(function (res) {
+        if (res && res.value) {
+          var s = JSON.parse(res.value);
+          if (typeof s.rate === 'number') state.rate = s.rate;
+          if (typeof s.vat === 'number') state.vat = s.vat;
+        }
+        go();
+      }).catch(go);
+    } catch (e) { go(); }
+  })();
+})();
+</script>
